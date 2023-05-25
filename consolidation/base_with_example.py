@@ -17,7 +17,7 @@ class BaseForm:
         self.root.wm_attributes('-topmost', True) # set the form to always be on top
         self.WIDTH = 15
         self.root.geometry(f"+{x_pos}+{y_pos}") # set the initial position of the form
-        # self.root.resizable(False, False) # disable resizing the form
+        self.root.resizable(False, False) # disable resizing the form
         
         self.folder_path = os.path.dirname(os.path.abspath(__file__)) # get the path of the folder where the script is located
         self.root.iconbitmap(f"{self.folder_path}\\fox.ico") # set the icon of the form
