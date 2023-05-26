@@ -8,12 +8,12 @@ from datetime import datetime
 # from jinja2 import Environment, FileSystemLoader
 
 class BaseForm:
-    def __init__(self):
+    def __init__(self, title="Base Form"):
         # set the initial position of the form
         x_pos = 700
         y_pos = 180
         self.root = tk.Tk()
-        self.root.title("Abstract")
+        self.root.title(title)
         self.root.wm_attributes('-topmost', True) # set the form to always be on top
         self.WIDTH = 15
         self.root.geometry(f"+{x_pos}+{y_pos}") # set the initial position of the form
@@ -30,6 +30,7 @@ class BaseForm:
         # self.description = None
         self.source_file = 'Empty'
         self.create_start_widgets()
+
 
     def create_start_widgets(self):
         # add a button to open the file with filedialog
@@ -91,11 +92,13 @@ class BaseForm:
 
         
     def create_entries(self, data):
-        # create the widgets
+    # create the widgets
         for key, value in data[0].items():
             label = ttk.Label(self.root, text=key)
             entry = ttk.Entry(self.root, width=self.WIDTH)
             entry.insert(0, value)
+            if key.lower() == 'password':
+                entry.configure(show='*')
             self.labels[key] = label
             self.entries[key] = entry
 
@@ -205,7 +208,7 @@ class BaseForm:
     def on_closing(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
             # update the file with 'updated' field
-            if self.keep_log_status:
+            if self.checkbox_log_var.get() == 1:
                 # create a new file with the same name as the source file
                 new_file_name = self.source_file + "_updated.xlsx"
                 workbook = openpyxl.Workbook()
@@ -232,7 +235,7 @@ class BaseForm:
     
  
     def submit_form(self):
-        ...
+        print("Submit from base form")
 
     def renew_and_place(self):
         ...
@@ -248,6 +251,10 @@ class BaseForm:
     
     def mainloop(self):
         self.root.mainloop()
+
+class BaseFormExample(BaseForm):
+    def __init__(self, title="Example"):
+        super().__init__(title)
     
 
 
@@ -255,5 +262,5 @@ class BaseForm:
 if __name__ == '__main__':
     
 
-    app = BaseForm()
+    app = BaseFormExample("Some Example")
     app.mainloop()
