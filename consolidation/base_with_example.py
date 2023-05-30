@@ -17,15 +17,15 @@ class BaseForm:
         self.root.wm_attributes('-topmost', True) # set the form to always be on top
         self.WIDTH = 15
         self.root.geometry(f"+{x_pos}+{y_pos}") # set the initial position of the form
-        self.root.resizable(False, False) # disable resizing the form
-        
+        # self.root.resizable(False, False) # disable resizing the form
+        self.root.iconbitmap('invoice_rule/fox.ico')
         self.folder_path = os.path.dirname(os.path.abspath(__file__)) # get the path of the folder where the script is located
-        self.root.iconbitmap(f"{self.folder_path}\\fox.ico") # set the icon of the form
+
         self.labels = {}
         self.entries = {}
         self.form_data = {}
         self.i = 0
-        self.keep_log_status = False
+        self.updated_status = False
         self.root.protocol("WM_DELETE_WINDOW", self.on_closing)
         # self.description = None
         self.source_file = 'Empty'
@@ -79,7 +79,7 @@ class BaseForm:
             for row in data_list:
                 row['updated'] = False
         else:
-            self.keep_log_status = True
+            self.updated_status = True
             print("Updated status is True")
         self.current_row = 0
         print(data_list[self.current_row])
@@ -205,7 +205,7 @@ class BaseForm:
     def on_closing(self):
         if messagebox.askokcancel("Quit", "Do you want to quit?"):
             # update the file with 'updated' field
-            if self.keep_log_status:
+            if self.updated_status:
                 # create a new file with the same name as the source file
                 new_file_name = self.source_file + "_updated.xlsx"
                 workbook = openpyxl.Workbook()
@@ -217,30 +217,18 @@ class BaseForm:
                 for i, row in enumerate(self.data):
                     for j, key in enumerate(row.keys()):
                         worksheet.cell(row=i+2, column=j+1).value = row[key]
-                while True:
-                    try:
-                        workbook.save(new_file_name)
-                        self.root.destroy()
-                        exit()
-                    except PermissionError:
-                        messagebox.askretrycancel("Error", "Please close the file")
+                workbook.save(new_file_name)
 
             self.root.destroy()
 
     def submit_status_true(self):
-        self.keep_log_status = True
+        self.updated_status = True
     
  
     def submit_form(self):
         ...
 
     def renew_and_place(self):
-        ...
-
-    def additional_widgets(self):
-        ...
-
-    def place_additional_widgets(self):
         ...
 
     def update_external(self):
@@ -251,10 +239,11 @@ class BaseForm:
     
 
 class ConsolidationPost(BaseForm):
-    def __init__(self):
+    def __init__(self, system_instance):
         super().__init__()
         self.root.title("Consolidation")
         self.sleep = 0.5
+        self.system_instance = system_instance
 
     def additional_widgets(self):
         self.horisontal_line = ttk.Separator(self.root, orient='horizontal')
@@ -307,7 +296,7 @@ class ConsolidationPost(BaseForm):
             if submit_answer:
                 self.activate_foreground_window()
                 pag.sleep(self.sleep)
-                self.activate_window_with_name("Oracle Applications - LIVE")
+                self.activate_window_with_name(self.system_instance)
                 pag.press('enter')
                 pag.sleep(self.sleep)
                 # ipdate 'updated' field in self.data with current time with seconds
@@ -327,5 +316,5 @@ class ConsolidationPost(BaseForm):
 if __name__ == '__main__':
     
 
-    app = ConsolidationPost()
+    app = ConsolidationPost("Diagnostic")
     app.mainloop()
