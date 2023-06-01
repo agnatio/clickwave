@@ -5,41 +5,8 @@ import win32gui
 import os
 import pyautogui as pag
 from datetime import datetime
+from stopping_form import invoke_stopping_form
 # from jinja2 import Environment, FileSystemLoader
-
-def invoke_stopping_form(title, seconds=5):
-    seconds = int(seconds)  # Convert seconds to an integer
-
-    def update_timer():
-        nonlocal seconds
-        if seconds > 0:
-            go_button['text'] = f'Press or wait {seconds} seconds'
-            seconds -= 1
-            root.after(1000, update_timer)
-        else:
-            root.destroy()
-
-    def cancel():
-        root.destroy()
-        exit()
-
-    root = tk.Tk()
-    root.title(title)
-    icon = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'fox.ico')
-    root.iconbitmap(icon)
-
-    title_label = tk.Label(root, text=title)
-    title_label.pack()
-
-    go_button = tk.Button(root, text='Go', command=root.destroy)
-    go_button.pack(side=tk.LEFT)
-
-    cancel_button = tk.Button(root, text='Cancel', command=cancel)
-    cancel_button.pack(side=tk.LEFT)
-
-    update_timer()  # Initial call to start the timer
-
-    root.mainloop()
 
 class BaseForm:
     def __init__(self, title="Base Form"):
